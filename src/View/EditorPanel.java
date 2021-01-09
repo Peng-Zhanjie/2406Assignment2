@@ -14,27 +14,37 @@ public class EditorPanel extends JPanel {
     public ArrayList<Road> roads;
     public ArrayList<TrafficLight> lights;
     private int scale;
+    public JPanel infoRoadPanel;
 
 
     public void newMap() {
         roads = new ArrayList<>();
         lights = new ArrayList<>();
+        infoRoadPanel = new JPanel();
+        infoRoadPanel.setLayout(new GridLayout(1, 0));
+        JLabel XLabel = new JLabel(" Road x position: ");
+        infoRoadPanel.add(XLabel);
+        JLabel YLabel = new JLabel("   Road y position: ");
+        infoRoadPanel.add(YLabel);
+        add(infoRoadPanel, BorderLayout.SOUTH);
+
+
         MouseAdapter mouseLis = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int xValue = e.getX() / scale;
                 int yValue = e.getY() / scale;
-                System.out.println("X: " + xValue);
-                System.out.println("Y: " + yValue);
+                XLabel.setText(" Road x position: " + xValue);
+                YLabel.setText("   Road y position: " + yValue);
                 if (roads.size() == 0) {
                     if (e.getY() < 10) {
                         roads.add(new Road(Integer.toString(roads.size()), 1, 50, new int[]{xValue, 0}
                                 , Road.Orientation.VERTICAL));
-                        System.out.print("New road added");
+                        System.out.print("New road added\n");
                     } else if (e.getX() < 10) {
                         roads.add(new Road(Integer.toString(roads.size()), 1, 50, new int[]{0, yValue}
                                 , Road.Orientation.HORIZONTAL));
-                        System.out.print("New road added");
+                        System.out.print("New road \n");
                     }
 
                 } else {
@@ -60,9 +70,7 @@ public class EditorPanel extends JPanel {
                             null, connectionOptions, connectionOptions[0]);
                     roads.get(connectionSelection).getConnectedRoads().add(roads.get(roads.size() - 1));
                 }
-                for (Road road : roads) {
-                    lights.add(new TrafficLight("1", road));
-                }
+                    lights.add(new TrafficLight("1", roads.get(roads.size() - 1)));
                 repaint();
             }
         };

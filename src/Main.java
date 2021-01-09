@@ -9,7 +9,8 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.lang.IndexOutOfBoundsException;
 
 public class Main {
 
@@ -79,72 +80,78 @@ public class Main {
 
         JMenuItem openMapItem = new JMenuItem("Open");  //Get a string from txt
         openMapItem.addActionListener(e -> {
+            simulationPanel.setVisible(false);
+            mainWindow.remove(editorPanel);    //Create a new map to load
+            editorPanel = new EditorPanel();
+            editorPanel.newMap();
+            editorPanel.setScale(SCALE);
+            mainWindow.add(editorPanel);
+            editorPanel.setVisible(true);
+            statusLabel.setText("Status: Loaded Map");
+            mainWindow.validate();
+            mainWindow.repaint();
+
+
             OpenFile file1=new OpenFile();
             byte[] item=file1.getItem();    //Added function, open file in the method
-            try {
-                String textWeOpen=new String(item,"utf-8");
-                System.out.println(textWeOpen);
-                String[] Ourroads=textWeOpen.split("\n");   //Get individual road information
-                for(String line : Ourroads){
+            String textWeOpen=new String(item, StandardCharsets.UTF_8);
+            System.out.println(textWeOpen);
+            String[] Ourroads=textWeOpen.split("\n");   //Get individual road information
+            for(String line : Ourroads){
 
-                    String[] line0=line.split("road_");
-                    String[] RoadName=line0[1].split(" Length:");
-                    String[] Length=RoadName[1].split(" Start X:");
-                    String[] X=Length[1].split(" Start Y:");
-                    String[] Y=X[1].split(" ");
-                    System.out.println(Y[1]);
+                String[] line0=line.split("road_");
+                String[] RoadName=line0[1].split(" Length:");
+                String[] Length=RoadName[1].split(" Start X:");
+                String[] X=Length[1].split(" Start Y:");
+                String[] Y=X[1].split(" ");
+                System.out.println(Y[1]);
 
 
-                    if(((Integer.parseInt(X[0])<10/8) || (Integer.parseInt(Y[0])<10/8))&& editorPanel.roads.size() == 0) {
-                        if (Y[1].equals("Horizontal")) {
-                            editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
-                                    , Road.Orientation.HORIZONTAL));
-                        } else {
-                            editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
-                                    , Road.Orientation.VERTICAL));
-                        }
-                        editorPanel.repaint();
-                    } else{   //If it is not initial Road we must select the connected road fot it
-                        String[] orientationOptions = {"Horizontal", "Vertical"};
-                        int orientationSelection = JOptionPane.showOptionDialog(null, "Choose Loading Road Orientation:",
-                                "Reset Road Orientation Selection", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
-                                null, orientationOptions, editorPanel.roads);
-                        switch (orientationSelection) {
-                            case 0:
-                                editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
-                                        , Road.Orientation.HORIZONTAL));
-                                break;
-                            case 1:
-                                editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
-                                        , Road.Orientation.VERTICAL));
-                        }
-
-                        String[] connectionOptions = new String[30];
-                        for (int i = 0; i < connectionOptions.length; i++) {
-                            connectionOptions[i] = Integer.toString(i);
-                        }
-                        int connectionSelection = JOptionPane.showOptionDialog(null, "Choose Connecting Model.Road:",
-                                "Connections Selection", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
-                                null, connectionOptions, connectionOptions[0]);
-                        editorPanel.roads.get(connectionSelection).getConnectedRoads().add(editorPanel.roads.get(editorPanel.roads.size() - 1));
-                        for (Road road : editorPanel.roads) {
-                            editorPanel.lights.add(new TrafficLight("1", road));}
-
-                        editorPanel.repaint();
+                if(((Integer.parseInt(X[0])<10/SCALE) || (Integer.parseInt(Y[0])<10/SCALE))&& editorPanel.roads.size() == 0) {  //Check whether it is initial road or not
+                    if (Y[1].equals("Horizontal")) {
+                        editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
+                                , Road.Orientation.HORIZONTAL));
+                    } else {
+                        editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
+                                , Road.Orientation.VERTICAL));
+                    }
+                } else{   //If it is not initial Road we must select the orientation and connected road fot it
+                    String[] orientationOptions = {"Horizontal", "Vertical"};
+                    int orientationSelection = JOptionPane.showOptionDialog(null, "Choose Loading Road Orientation:",
+                            "Reset Road Orientation Selection", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                            null, orientationOptions, editorPanel.roads);
+                    switch (orientationSelection) {  //As same as the EditorPanel
+                        case 0 -> editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
+                                , Road.Orientation.HORIZONTAL));
+                        case 1 -> editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
+                                , Road.Orientation.VERTICAL));
                     }
 
+                    String[] connectionOptions = new String[30];  //Connected Road option
+                    for (int i = 0; i < connectionOptions.length; i++) {
+                        connectionOptions[i] = Integer.toString(i);
+                    }
+                    int connectionSelection = JOptionPane.showOptionDialog(null, "Choose Connecting Model.Road:",
+                            "Connections Selection", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                            null, connectionOptions, connectionOptions[0]);
+
+                    try {   //If can not set connected road, it will show the dialog and jump to next one
+                        editorPanel.roads.get(connectionSelection).getConnectedRoads().add(editorPanel.roads.get(editorPanel.roads.size() - 1));
+                    } catch (Exception mistake){
+                        JOptionPane.showMessageDialog(null, "Can not find the connected Road!!","Mistake",JOptionPane.INFORMATION_MESSAGE);
+                        System.out.println("Message: " + mistake);
+                    }
                 }
-
-            } catch (UnsupportedEncodingException unsupportedEncodingException) {
-                unsupportedEncodingException.printStackTrace();
+                editorPanel.repaint();
             }
-
+            for (Road road : editorPanel.roads) {   //Add the light for loaded road
+                editorPanel.lights.add(new TrafficLight("1", road));}
         });
         editMenu.add(openMapItem);
 
         JMenuItem saveMapItem = new JMenuItem("Save");
         saveMapItem.addActionListener(e -> {
-            SaveFile file2=new SaveFile();    //Added function, Save the roads 
+            SaveFile file2=new SaveFile();    //Added function, Save the roads
             String textToSave="";
             for(Road road : editorPanel.roads) {
                 if (road.orientation == Road.Orientation.HORIZONTAL) {
@@ -158,6 +165,25 @@ public class Main {
             file2.saveItem(textToSave);
         });
         editMenu.add(saveMapItem);
+
+        JMenuItem DeleteRoadItem = new JMenuItem("Delete");
+        DeleteRoadItem.addActionListener(e -> {
+            if(editorPanel.roads.size()>0) {
+                Road roadToDelete = editorPanel.roads.get(editorPanel.roads.size() - 1);
+                for (TrafficLight The: roadToDelete.getLightsOnRoad()){
+                    System.out.println(roadToDelete.id+" has "+roadToDelete.getLightsOnRoad().size()+" to Delete");
+                }
+                if(roadToDelete.getLightsOnRoad().size()>0&&editorPanel.lights.size()>0){
+                    for(int i=1;i<=roadToDelete.getLightsOnRoad().size();i++){
+                        if(editorPanel.lights.size()>=1){ editorPanel.lights.remove(editorPanel.lights.size()-1);
+                            System.out.println(editorPanel.lights.size()+" lights remain");}
+                    }
+                }
+                editorPanel.roads.remove(roadToDelete);
+                editorPanel.repaint();
+            }
+        });
+        editMenu.add(DeleteRoadItem);
 
         JMenuItem exitProgramItem = new JMenuItem("Exit");
         exitProgramItem.addActionListener(e -> System.exit(0));

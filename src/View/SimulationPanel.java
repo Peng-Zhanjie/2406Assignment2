@@ -30,6 +30,7 @@ public class SimulationPanel extends JPanel {
     private int updateRate = 1000;
 
 
+
     public void loadMap(ArrayList<Road> roads, ArrayList<TrafficLight> lights) {
         this.roads = roads;
         this.lights = lights;
@@ -45,7 +46,7 @@ public class SimulationPanel extends JPanel {
     }
 
     private void createVehicle() {
-        int randomVehicle = random.nextInt(3);
+        int randomVehicle = random.nextInt(4);
         switch (randomVehicle) {
             case 0:
                 vehicles.add(new Car(Integer.toString(cycle), roads.get(0)));
@@ -55,6 +56,9 @@ public class SimulationPanel extends JPanel {
                 break;
             case 2:
                 vehicles.add(new Motorbike(Integer.toString(cycle), roads.get(0)));
+                break;
+            case 3:
+                vehicles.add(new Taxi(Integer.toString(cycle), roads.get(0)));  //Taxi class for feature
                 break;
         }
     }
@@ -168,6 +172,4 @@ public class SimulationPanel extends JPanel {
     public void setStopSim(Boolean stop) {
         this.stop = stop;
     }
-
-
 }
