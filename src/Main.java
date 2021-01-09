@@ -1,10 +1,15 @@
+import Model.OpenFile;
+import Model.SaveFile;
+import Model.TrafficLight;
 import View.EditorPanel;
 import View.SimulationPanel;
-
+import Model.Road;
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.UnsupportedEncodingException;
 
 public class Main {
 
@@ -51,6 +56,8 @@ public class Main {
             @Override
             public void menuCanceled(MenuEvent e) {
             }
+
+
         };
         editMenu.addMenuListener(cityLis);
         menuBar.add(editMenu);
@@ -70,13 +77,85 @@ public class Main {
         });
         editMenu.add(newMapItem);
 
-        JMenuItem openMapItem = new JMenuItem("Open");
+        JMenuItem openMapItem = new JMenuItem("Open");  //Get a string from txt
         openMapItem.addActionListener(e -> {
+            OpenFile file1=new OpenFile();
+            byte[] item=file1.getItem();    //Added function, open file in the method
+            try {
+                String textWeOpen=new String(item,"utf-8");
+                System.out.println(textWeOpen);
+                String[] Ourroads=textWeOpen.split("\n");   //Get individual road information
+                for(String line : Ourroads){
+
+                    String[] line0=line.split("road_");
+                    String[] RoadName=line0[1].split(" Length:");
+                    String[] Length=RoadName[1].split(" Start X:");
+                    String[] X=Length[1].split(" Start Y:");
+                    String[] Y=X[1].split(" ");
+                    System.out.println(Y[1]);
+
+
+                    if(((Integer.parseInt(X[0])<10/8) || (Integer.parseInt(Y[0])<10/8))&& editorPanel.roads.size() == 0) {
+                        if (Y[1].equals("Horizontal")) {
+                            editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
+                                    , Road.Orientation.HORIZONTAL));
+                        } else {
+                            editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
+                                    , Road.Orientation.VERTICAL));
+                        }
+                        editorPanel.repaint();
+                    } else{   //If it is not initial Road we must select the connected road fot it
+                        String[] orientationOptions = {"Horizontal", "Vertical"};
+                        int orientationSelection = JOptionPane.showOptionDialog(null, "Choose Loading Road Orientation:",
+                                "Reset Road Orientation Selection", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                                null, orientationOptions, editorPanel.roads);
+                        switch (orientationSelection) {
+                            case 0:
+                                editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
+                                        , Road.Orientation.HORIZONTAL));
+                                break;
+                            case 1:
+                                editorPanel.roads.add(new Road(RoadName[0], 1, Integer.parseInt(Length[0]), new int[]{Integer.parseInt(X[0]), Integer.parseInt(Y[0])}
+                                        , Road.Orientation.VERTICAL));
+                        }
+
+                        String[] connectionOptions = new String[30];
+                        for (int i = 0; i < connectionOptions.length; i++) {
+                            connectionOptions[i] = Integer.toString(i);
+                        }
+                        int connectionSelection = JOptionPane.showOptionDialog(null, "Choose Connecting Model.Road:",
+                                "Connections Selection", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                                null, connectionOptions, connectionOptions[0]);
+                        editorPanel.roads.get(connectionSelection).getConnectedRoads().add(editorPanel.roads.get(editorPanel.roads.size() - 1));
+                        for (Road road : editorPanel.roads) {
+                            editorPanel.lights.add(new TrafficLight("1", road));}
+
+                        editorPanel.repaint();
+                    }
+
+                }
+
+            } catch (UnsupportedEncodingException unsupportedEncodingException) {
+                unsupportedEncodingException.printStackTrace();
+            }
+
         });
         editMenu.add(openMapItem);
 
         JMenuItem saveMapItem = new JMenuItem("Save");
         saveMapItem.addActionListener(e -> {
+            SaveFile file2=new SaveFile();    //Added function, Save the roads 
+            String textToSave="";
+            for(Road road : editorPanel.roads) {
+                if (road.orientation == Road.Orientation.HORIZONTAL) {
+                    textToSave = textToSave + road.id + " Length:" + road.length + " Start X:" + road.startLocation[0] + " Start Y:" + road.startLocation[1] + " Horizontal" + "\n";
+                } else{
+                    textToSave = textToSave + road.id + " Length:" + road.length + " Start X:" + road.startLocation[0] + " Start Y:" + road.startLocation[1] + " Vertical" + "\n";
+                }
+            }
+            textToSave = textToSave.substring(0, textToSave.length() - 1);
+            System.out.println(textToSave);
+            file2.saveItem(textToSave);
         });
         editMenu.add(saveMapItem);
 

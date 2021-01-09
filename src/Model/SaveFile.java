@@ -10,17 +10,17 @@ import java.nio.file.Paths;
 import static java.nio.file.StandardOpenOption.CREATE;
 
 public class SaveFile {
-    public static void main(String[] args) {
-        Path file =
-                Paths.get("src/Model.SaveFile.txt");
-        String s = "ABCDFGH";
+    Path file = Paths.get("SaveFile.txt");
+    public void saveItem(String text) {
+        String s = text;
         byte[] data = s.getBytes();
         OutputStream output;
         try {
-            output = new BufferedOutputStream(Files.newOutputStream(file, CREATE));
+            output = new BufferedOutputStream(Files.newOutputStream(file));
             output.write(data);
             output.flush();
             output.close();
+            System.out.print("Save Finished\n");
         } catch (FileAlreadyExistsException e) {
             System.out.println("File already exists");
         } catch (Exception e) {

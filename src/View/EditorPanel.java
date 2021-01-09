@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class EditorPanel extends JPanel {
 
-    private ArrayList<Road> roads;
-    private ArrayList<TrafficLight> lights;
+    public ArrayList<Road> roads;
+    public ArrayList<TrafficLight> lights;
     private int scale;
 
 
@@ -30,11 +30,12 @@ public class EditorPanel extends JPanel {
                     if (e.getY() < 10) {
                         roads.add(new Road(Integer.toString(roads.size()), 1, 50, new int[]{xValue, 0}
                                 , Road.Orientation.VERTICAL));
+                        System.out.print("New road added");
                     } else if (e.getX() < 10) {
                         roads.add(new Road(Integer.toString(roads.size()), 1, 50, new int[]{0, yValue}
                                 , Road.Orientation.HORIZONTAL));
+                        System.out.print("New road added");
                     }
-
 
                 } else {
                     String[] orientationOptions = {"Horizontal", "Vertical"};
@@ -95,13 +96,13 @@ public class EditorPanel extends JPanel {
             for (Road road : roads
             ) {
                 road.draw(g, scale);
-//                g.setColor(Color.YELLOW);
-//                int[] location = road.getEndLocation();
-//                int x = location[0];
-//                int y = location[1];
-//                int width = 10 * scale;
-//                int height = road.getWidth() * scale;
-//                g.fillRect(x,y,width,height);
+                g.setColor(Color.YELLOW);
+                int[] location = road.getEndLocation();
+                int x = location[0];
+                int y = location[1];
+                int width = 10 * scale;
+                int height = road.getWidth() * scale;
+                g.fillRect(x,y,width,height);
             }
         }
 

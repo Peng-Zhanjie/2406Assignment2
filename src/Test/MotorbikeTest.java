@@ -1,24 +1,25 @@
+package Test;
 import Model.Road;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MotorbikeTest {
     Model.Motorbike bike = new Model.Motorbike("0", new Model.Road("0", 1, 5, new int[]{0, 0}, Road.Orientation.VERTICAL));
 
     @Test
     void getLength() {
-        assertEquals(2.0, bike.getLength());
+        Assert.assertEquals(2.0, bike.getLength(),0);
     }
 
     @Test
     void getId() {
-        assertEquals("bike_0", bike.getId());
+        Assert.assertEquals("bike_0", bike.getId());
     }
 
     @Test
     void testInheritance() {
-        assertEquals(0, bike.getSpeed());
-        assertEquals(-2, bike.getPosition());
+        Assert.assertEquals(0, bike.getSpeed());
+        Assert.assertEquals(-2, bike.getPosition());
     }
 }

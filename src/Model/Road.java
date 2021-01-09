@@ -9,13 +9,13 @@ public class Road {
         HORIZONTAL, VERTICAL
     }
 
-    private Orientation orientation;
-    private String id;
-    private int speedLimit;
-    private int length;
-    private int width;
-    private int[] startLocation;
-    private int[] endLocation;
+    public Orientation orientation;
+    public String id;
+    public int speedLimit;
+    public int length;
+    public int width;
+    public int[] startLocation;
+    public int[] endLocation;
     private ArrayList<Vehicle> vehiclesOnRoad = new ArrayList<>();
     private ArrayList<TrafficLight> lightsOnRoad = new ArrayList<>();
     private ArrayList<Road> connectedRoads = new ArrayList<>();
@@ -72,7 +72,7 @@ public class Road {
         return length;
     }
 
-    int getWidth() {
+    public int getWidth() {
         return width;
     }
 
