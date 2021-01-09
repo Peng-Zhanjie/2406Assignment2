@@ -10,15 +10,14 @@ public class OpenFile {
     public byte[] getItem(){
         try {
               InputStream input= new BufferedInputStream(Files.newInputStream(file));
-              byte data[] = new byte[1024] ;
-              int len = input.read(data);
-            System.out.print("Open Finished\n");
+              byte data[] = new byte[1024];
+              input.read(data);
+              System.out.print("Open Finished\n");
               return data;
         } catch (Exception e) {
               System.out.println("Message: " + e);
               return new byte[1024];
         }
-
     }
 
 }
