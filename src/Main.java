@@ -168,20 +168,7 @@ public class Main {
 
         JMenuItem DeleteRoadItem = new JMenuItem("Delete");
         DeleteRoadItem.addActionListener(e -> {
-            if(editorPanel.roads.size()>0) {
-                Road roadToDelete = editorPanel.roads.get(editorPanel.roads.size() - 1);
-                for (TrafficLight The: roadToDelete.getLightsOnRoad()){
-                    System.out.println(roadToDelete.id+" has "+roadToDelete.getLightsOnRoad().size()+" to Delete");
-                }
-                if(roadToDelete.getLightsOnRoad().size()>0&&editorPanel.lights.size()>0){
-                    for(int i=1;i<=roadToDelete.getLightsOnRoad().size();i++){
-                        if(editorPanel.lights.size()>=1){ editorPanel.lights.remove(editorPanel.lights.size()-1);
-                            System.out.println(editorPanel.lights.size()+" lights remain");}
-                    }
-                }
-                editorPanel.roads.remove(roadToDelete);
-                editorPanel.repaint();
-            }
+            editorPanel.deleteRoad();
         });
         editMenu.add(DeleteRoadItem);
 

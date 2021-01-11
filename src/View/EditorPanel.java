@@ -90,6 +90,23 @@ public class EditorPanel extends JPanel {
         this.scale = scale;
     }
 
+    public void deleteRoad(){
+        if(roads.size()>0) {
+            Road roadToDelete = roads.get(roads.size() - 1);
+            for (TrafficLight The: roadToDelete.getLightsOnRoad()){
+                System.out.println(roadToDelete.id+" has "+roadToDelete.getLightsOnRoad().size()+" to Delete");
+            }
+            if(roadToDelete.getLightsOnRoad().size()>0&&lights.size()>0){
+                for(int i=1;i<=roadToDelete.getLightsOnRoad().size();i++){
+                    if(lights.size()>=1){lights.remove(lights.size()-1);
+                        System.out.println(lights.size()+" lights remain");}
+                }
+            }
+            roads.remove(roadToDelete);
+            repaint();
+        }
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
