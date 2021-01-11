@@ -78,6 +78,9 @@ public class SimulationPanel extends JPanel {
         infoPanel.add(averageSpeedLabel);
         JLabel stateLabel = new JLabel("State: " + state);
         infoPanel.add(stateLabel);
+
+        JLabel roadLabel = new JLabel("Road: " + this.roads.size());  //Add feature to show the size of roads
+        infoPanel.add(roadLabel);
         add(infoPanel, BorderLayout.SOUTH);
 
         if (timer != null) {
@@ -95,6 +98,7 @@ public class SimulationPanel extends JPanel {
             stateLabel.setText("State: " + state);
             vehicleLabel.setText("Vehicles: " + getTotalVehicles());
             averageSpeedLabel.setText("Average Speed:" + getAverageSpeed());
+            roadLabel.setText("Road: " + this.roads.size());
             if (vehicles.size() == 0 || stop) {
                 timer.stop();
             }
@@ -106,7 +110,7 @@ public class SimulationPanel extends JPanel {
             }
             for (Iterator<Vehicle> iterator = vehicles.iterator(); iterator.hasNext(); ) {
                 Vehicle vehicle = iterator.next();
-//                vehicle.setLane(Model.Vehicle.Lane.LEFT);
+                //vehicle.setLane(Model.Vehicle.Lane.LEFT);
                 vehicle.move();
                 vehicle.printStatus();
                 if (vehicle.getPosition() + vehicle.getLength() + vehicle.getSpeed() >= vehicle.getCurrentRoad().getLength() && vehicle.getCurrentRoad().getConnectedRoads().isEmpty() && (vehicle.getSpeed() == 0)) {
@@ -167,9 +171,7 @@ public class SimulationPanel extends JPanel {
     public void setUpdateRate(int updateRate) {
         this.updateRate = updateRate;
     }
-
-
     public void setStopSim(Boolean stop) {
         this.stop = stop;
     }
-}
+    }
