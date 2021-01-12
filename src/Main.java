@@ -1,6 +1,5 @@
 import Model.OpenFile;
 import Model.SaveFile;
-import Model.TrafficLight;
 import View.EditorPanel;
 import View.SimulationPanel;
 import Model.Road;
@@ -81,9 +80,9 @@ public class Main {
         JMenuItem openMapItem = new JMenuItem("Open");  //Get a string from txt
         openMapItem.addActionListener(e -> {
             simulationPanel.setVisible(false);
-            mainWindow.remove(editorPanel);    //Create a new map to load
+            mainWindow.remove(editorPanel);
             editorPanel = new EditorPanel();
-            editorPanel.newMap();
+            editorPanel.newMap();      //Create a new map to load
             editorPanel.setScale(SCALE);
             mainWindow.add(editorPanel);
             editorPanel.setVisible(true);
@@ -96,8 +95,8 @@ public class Main {
             byte[] item=file1.getItem();    //Added function, open file in the method
             String textWeOpen=new String(item, StandardCharsets.UTF_8);
             System.out.println(textWeOpen);
-            String[] Ourroads=textWeOpen.split("\n");   //Get individual road information
-            editorPanel.openMap(Ourroads);
+            String[] ourRoads=textWeOpen.split("\n");   //Get individual road information
+            editorPanel.openMap(ourRoads);
         });
         editMenu.add(openMapItem);
 
@@ -118,7 +117,7 @@ public class Main {
         });
         editMenu.add(saveMapItem);
 
-        JMenuItem DeleteRoadItem = new JMenuItem("Delete");
+        JMenuItem DeleteRoadItem = new JMenuItem("Delete");   //The button of "Delete"
         DeleteRoadItem.addActionListener(e -> {
             editorPanel.deleteRoad();
         });

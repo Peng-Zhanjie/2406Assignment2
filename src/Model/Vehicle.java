@@ -41,7 +41,7 @@ public abstract class Vehicle {
         //vehicle in front check:
         for (Vehicle nextVehicle : currentRoad.getVehiclesOnRoad()) {
             if (nextVehicle.position > position && nextVehicle.position <= nextPosition + 4) {
-                speed = STOPPED;
+                speed = STOPPED;   //If there are Vehicles close to it, stop
                 break;
             } else {
                 speed = currentRoad.getSpeedLimit();

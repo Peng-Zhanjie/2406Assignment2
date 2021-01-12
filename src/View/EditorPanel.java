@@ -140,7 +140,7 @@ public class EditorPanel extends JPanel {
             }
             repaint();
         }
-        for (Road road : roads) {   //Add the light for loaded road
+        for (Road road : roads) {   //Add the light for all loaded roads
             lights.add(new TrafficLight("1", road));}
     }
 
